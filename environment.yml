@@ -79,6 +79,7 @@ dependencies:
   - gdbn==0.1
   - gnumpy==0.2
   - ipython-genutils==0.1.0
+  - ipywidgets
   - jupyter-client==4.4.0
   - jupyter-core==4.2.0
   - prompt-toolkit==1.0.3
@@ -89,4 +90,4 @@ dependencies:
   - "--editable=git+https://github.com/Lasagne/Lasagne.git@61b1ad1#egg=Lasagne==0.2.git"
   - "--editable=git+https://github.com/ottogroup/palladium.git@develop#egg=palladium==1.0.2.a.git"
   - "--editable=git+https://github.com/topiaruss/nolearn.git@68ff839#egg=nolearn==0.7.git"
-  - ipywidgets
+  - "--editable=git+https://github.com/dnouri/nolearn_utils.git@01096e3#egg=nolearn_utils==0.1.git"
