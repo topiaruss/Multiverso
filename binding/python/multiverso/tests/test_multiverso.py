@@ -25,7 +25,7 @@ class TestMultiversoTables(unittest.TestCase):
         tbh = mv.ArrayTableHandler(size)
         mv.barrier()
 
-        for i in xrange(100):
+        for i in range(100):
             tbh.add(range(1, size + 1))
             tbh.add(range(1, size + 1))
             mv.barrier()
@@ -51,7 +51,7 @@ class TestMultiversoTables(unittest.TestCase):
         workers_num = mv.workers_num()
         tbh = mv.MatrixTableHandler(num_row, num_col)
         mv.barrier()
-        for count in xrange(1, 21):
+        for count in range(1, 21):
             row_ids = [0, 1, 5, 10]
             tbh.add(range(size))
             tbh.add([range(rid * num_col, (1 + rid) * num_col) for rid in row_ids], row_ids)
@@ -92,7 +92,7 @@ class TestMultiversoSharedVariable(unittest.TestCase):
         train_model = theano.function([], updates=[(W, W + delta)])
         mv.barrier()
 
-        for i in xrange(100):
+        for i in range(100):
             train_model()
             train_model()
             sharedvar.sync_all_mv_shared_vars()

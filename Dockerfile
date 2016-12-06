@@ -65,29 +65,29 @@ RUN echo 'create conda env, clean' && \
 # //inherited
 
 # java
-RUN mkdir -p /usr/local/java/default && \
-    curl -Ls 'http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie' | \
-    tar --strip-components=1 -xz -C /usr/local/java/default/
-
-ENV JAVA_HOME /usr/local/java/default/ 
-ENV PATH $PATH:$JAVA_HOME/bin
+#RUN mkdir -p /usr/local/java/default && \
+#    curl -Ls 'http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie' | \
+#    tar --strip-components=1 -xz -C /usr/local/java/default/
+#
+#ENV JAVA_HOME /usr/local/java/default/
+#ENV PATH $PATH:$JAVA_HOME/bin
 
 # hadoop
-RUN wget -cq -t 0 http://www.eu.apache.org/dist/hadoop/common/hadoop-2.6.0/hadoop-2.6.0.tar.gz 
-RUN tar -xz -C /usr/local/ -f hadoop-2.6.0.tar.gz \
-    && rm hadoop-2.6.0.tar.gz \
-    && cd /usr/local && ln -s ./hadoop-2.6.0 hadoop \
-    && cp -r /usr/local/hadoop/include/* /usr/local/include
+#RUN wget -cq -t 0 http://www.eu.apache.org/dist/hadoop/common/hadoop-2.6.0/hadoop-2.6.0.tar.gz
+#RUN tar -xz -C /usr/local/ -f hadoop-2.6.0.tar.gz \
+#    && rm hadoop-2.6.0.tar.gz \
+#    && cd /usr/local && ln -s ./hadoop-2.6.0 hadoop \
+#    && cp -r /usr/local/hadoop/include/* /usr/local/include
+#
+#ENV HADOOP_PREFIX /usr/local/hadoop
+#RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/local/java/default\nexport HADOOP_PREFIX=/usr/local/hadoop\nexport HADOOP_HOME=/usr/local/hadoop\n:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+#RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
+#
+## fixing the libhadoop.so like a boss
+#RUN rm  /usr/local/hadoop/lib/native/* \
+#    && curl -Ls http://dl.bintray.com/sequenceiq/sequenceiq-bin/hadoop-native-64-2.6.0.tar | tar -x -C /usr/local/hadoop/lib/native/
 
-ENV HADOOP_PREFIX /usr/local/hadoop
-RUN sed -i '/^export JAVA_HOME/ s:.*:export JAVA_HOME=/usr/local/java/default\nexport HADOOP_PREFIX=/usr/local/hadoop\nexport HADOOP_HOME=/usr/local/hadoop\n:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-RUN sed -i '/^export HADOOP_CONF_DIR/ s:.*:export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop/:' $HADOOP_PREFIX/etc/hadoop/hadoop-env.sh
-
-# fixing the libhadoop.so like a boss
-RUN rm  /usr/local/hadoop/lib/native/* \
-    && curl -Ls http://dl.bintray.com/sequenceiq/sequenceiq-bin/hadoop-native-64-2.6.0.tar | tar -x -C /usr/local/hadoop/lib/native/
-
-## install Theano-dev
+# install Theano-dev
 #RUN mkdir -p /theano \
 #    && cd /theano \
 #    && git clone git://github.com/Theano/Theano.git \
@@ -98,9 +98,9 @@ RUN rm  /usr/local/hadoop/lib/native/* \
 #RUN pip install notebook ipywidgets
 
 # Run Torch7 installation scripts
-RUN git clone https://github.com/torch/distro.git /root/torch --recursive && cd /root/torch && \
-  bash install-deps && \
-  ./install.sh
+#RUN git clone https://github.com/torch/distro.git /root/torch --recursive && cd /root/torch && \
+#  bash install-deps && \
+#  ./install.sh
 
 
 # Export environment variables manually
@@ -125,7 +125,8 @@ ARG boost_version=1.62.0
 ARG boost_dir=boost_1_62_0
 ENV boost_version ${boost_version}
 
-RUN wget http://downloads.sourceforge.net/project/boost/boost/${boost_version}/${boost_dir}.tar.gz \
+RUN wget --quiet \
+    http://downloads.sourceforge.net/project/boost/boost/${boost_version}/${boost_dir}.tar.gz \
     && tar xfz ${boost_dir}.tar.gz \
     && rm ${boost_dir}.tar.gz \
     && cd ${boost_dir} \
@@ -136,6 +137,7 @@ RUN wget http://downloads.sourceforge.net/project/boost/boost/${boost_version}/$
 #RUN cd /dmtk && git clone https://github.com/Microsoft/multiverso.git && cd multiverso \
 #	&& mkdir build && cd build \
 #	&& cmake .. && make && make install
+#  The above git clone replaced by using the instance we are already part of...
 RUN cd /dmtk \
 	&& mkdir build && cd build \
 	&& cmake .. && make && make install
@@ -145,15 +147,22 @@ RUN cd /dmtk \
 RUN ln -snf /bin/bash /bin/sh
 
 RUN cd /home \
+    && mkdir -p theano \
     && source activate dreamkg_docker \
-    && cd /dmtk/binding/python \
-	&& python2 setup.py install \
-	&& nosetests
+    && cd /home/theano \
+    && git clone git://github.com/Theano/Theano.git \
+    && cd Theano \
+    && python setup.py develop
 
-# lua tests
-RUN cd /dmtk/binding/lua \
-	&& make install \
-	&& make test
+RUN cd /dmtk/binding/python \
+    && source activate dreamkg_docker \
+	&& python setup.py install \
+	&& /opt/conda/envs/dreamkg_docker/bin/nosetests
+
+## lua tests
+#RUN cd /dmtk/binding/lua \
+#	&& make install \
+#	&& make test
 
 # run cpp tests
 RUN cd /dmtk/build \
