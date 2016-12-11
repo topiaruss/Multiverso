@@ -1,4 +1,5 @@
-FROM ubuntu:14.04
+FROM nvidia/cuda:7.5-cudnn5-devel
+
 MAINTAINER lyysdy@foxmail.com
 
 USER root
