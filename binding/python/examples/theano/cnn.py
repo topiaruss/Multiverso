@@ -29,13 +29,14 @@ SOFTWARE.
 
 """
 
+
 import theano
 import theano.tensor as T
 import numpy as np
 import matplotlib.pyplot as plt
 plt.ion()
 
-from . import load_data
+import load_data
 
 from theano.tensor.nnet import conv
 from theano.tensor.signal import downsample
