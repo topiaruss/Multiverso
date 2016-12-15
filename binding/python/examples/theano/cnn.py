@@ -35,7 +35,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 plt.ion()
 
-import load_data
+from . import load_data
 
 from theano.tensor.nnet import conv
 from theano.tensor.signal import downsample
@@ -155,7 +155,7 @@ for i in range(50):
         predictions_test = predict(x_test)
         accuracy = np.mean(predictions_test == labels_test)
 
-        print "epoch %d - accuracy: %.4f" % (i + 1, accuracy)
+        print("epoch %d - accuracy: %.4f" % (i + 1, accuracy))
 
 # MULTIVERSO: You must call shutdown at the end of the file
 mv.shutdown()
