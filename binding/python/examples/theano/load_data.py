@@ -29,7 +29,7 @@ def load_cifar10(data_dir=CIFAR10_DIR):
     for i in range(1, 6):
         filename = os.path.join(data_dir, "data_batch_%d" % i)
         with open(filename, "rb") as f:
-            data_obj = pickle.load(f)
+            data_obj = pickle.load(f, encoding='latin1')
             x_train_l.append(data_obj["data"])
             t_train_l.extend(data_obj["labels"])
     x_train = np.concatenate(x_train_l, axis=0) / 255.
@@ -38,8 +38,8 @@ def load_cifar10(data_dir=CIFAR10_DIR):
     for i, cls in enumerate(t_train_l):
         t_train[i, cls] = 1
 
-    with open(os.path.join(data_dir, "test_batch")) as f:
-        data_obj = pickle.load(f)
+    with open(os.path.join(data_dir, "test_batch"), "rb") as f:
+        data_obj = pickle.load(f, encoding='latin1')
         x_test = data_obj["data"] / 255.
         t_test_l = data_obj["labels"]
 
