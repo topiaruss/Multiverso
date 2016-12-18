@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding:utf8
 
-import cPickle
+import pickle
 import os
 import sys
 CUR_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
@@ -26,10 +26,10 @@ def load_cifar10(data_dir=CIFAR10_DIR):
     x_train_l = []
     t_train_l = []
 
-    for i in xrange(1, 6):
+    for i in range(1, 6):
         filename = os.path.join(data_dir, "data_batch_%d" % i)
         with open(filename, "rb") as f:
-            data_obj = cPickle.load(f)
+            data_obj = pickle.load(f)
             x_train_l.append(data_obj["data"])
             t_train_l.extend(data_obj["labels"])
     x_train = np.concatenate(x_train_l, axis=0) / 255.
@@ -39,7 +39,7 @@ def load_cifar10(data_dir=CIFAR10_DIR):
         t_train[i, cls] = 1
 
     with open(os.path.join(data_dir, "test_batch")) as f:
-        data_obj = cPickle.load(f)
+        data_obj = pickle.load(f)
         x_test = data_obj["data"] / 255.
         t_test_l = data_obj["labels"]
 
